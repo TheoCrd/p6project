@@ -1,9 +1,11 @@
-#include <stdlib.h>
+#include <cstddef>
+#include <cstdlib>
+#include "glm/fwd.hpp"
 #include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
     { // Run the tests
         if (doctest::Context{}.run() != 0)
@@ -14,17 +16,28 @@ int main(int argc, char* argv[])
             return EXIT_SUCCESS;
     }
 
+    std::vector<glm::vec2> v(100);
+    for (size_t i = 0; i < v.size(); ++i)
+    {
+        v[i] = p6::random::point();
+    }
+
     // Actual app
     auto ctx = p6::Context{{.title = "p6Project"}};
     ctx.maximize_window();
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::Blue);
-        ctx.circle(
+        ctx.background(p6::NamedColor::Black);
+        /*ctx.circle(
             p6::Center{ctx.mouse()},
             p6::Radius{0.2f}
-        );
+        );*/
+        ctx.fill = {1, 0, 0, 0.5};
+        for (size_t i = 0; i < 100; ++i)
+        {
+            ctx.square(p6::Center{v[i]}, p6::Radius{0.1f});
+        }
     };
 
     // Should be done last. It starts the infinite loop.
